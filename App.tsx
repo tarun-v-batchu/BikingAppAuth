@@ -74,21 +74,21 @@ export default function App() {
   // };
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName='Form'>
-        <Stack.Screen name='Form' component={InsideLayout} options={{ headerShown: false }}/>
-      </Stack.Navigator>
-    </NavigationContainer>
-    
     // <NavigationContainer>
-    //   <Stack.Navigator initialRouteName='Login'>
-    //     {user ? (
-    //       <Stack.Screen name='Inside' component={InsideLayout} options={{ headerShown: false }}/>
-    //     ) : (
-    //       <Stack.Screen name='Login' component={Login} options={{ headerShown: false }}/>
-    //     )}
+    //   <Stack.Navigator initialRouteName='Form'>
+    //     <Stack.Screen name='Form' component={InsideLayout} options={{ headerShown: false }}/>
     //   </Stack.Navigator>
     // </NavigationContainer>
+    
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName='Login'>
+        {user ? (
+          <Stack.Screen name='Inside' component={InsideLayout} options={{ headerShown: false }}/>
+        ) : (
+          <Stack.Screen name='Login' component={Login} options={{ headerShown: false }}/>
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
