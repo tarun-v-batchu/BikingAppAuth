@@ -6,9 +6,10 @@ import { getFirestore } from 'firebase/firestore'
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCVKbEvezOk_IpY2sy7pqP6ZkmTmgbnbeY",
+  // apiKey: "AIzaSyCVKbEvezOk_IpY2sy7pqP6ZkmTmgbnbeY",
+  apiKey: "AIzaSyCFABN_NRrkL1oq-Ht8zC8A5NErTcDCzLo",
   authDomain: "rnauthvideo-c061f.firebaseapp.com",
-  projectId: "rnauthvideo-c061f",
+  projectId: "bikingapp-f8bc9",
   storageBucket: "rnauthvideo-c061f.appspot.com",
   messagingSenderId: "278275911885",
   appId: "1:278275911885:web:750b5cc94c2fc7e0e3f984"

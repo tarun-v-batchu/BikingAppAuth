@@ -1,142 +1,123 @@
-import React, {Component} from 'react';
-import {View, StyleSheet, Text} from 'react-native';
-import {FormControl, Stack, Input, Checkbox, Button} from 'native-base';
+import { View, Text, StyleSheet, TextInput, ActivityIndicator, Button, KeyboardAvoidingView } from "react-native";
+import React, { useState } from "react";
+import { FIREBASE_AUTH, FIRESTORE_DB } from "../../FirebaseConfig";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { collection, addDoc } from 'firebase/firestore';
+import Slider from '@react-native-community/slider';
+import * as Location from 'expo-location';
+import { Divider } from 'react-native-elements';
+
 
 const FormScreen = () => {
-  return (
-    // <View style={styles.container}>
-    //   <View style={styles.top}></View>
+  const [loading, setLoading] = useState(false); 
+  const [issue, setIssue] = useState(''); 
+  const [lat, setLat] = useState('');
+  const [lon, setLon] = useState('');
+  const [danger, setDanger] = useState('');
+  const [dangerIndex, setDangerIndex] = useState(0);
+  const [location, setLocation] = useState<Location.LocationObject | null>(null);
 
-    //   <View style={styles.middle}>
-    //     <Text style={styles.textContainer}>You are ready to go</Text>
 
-    //     <View style={styles.formArea}>
-    //       <Text style={[styles.textContainer, styles.signin]}>Sign in</Text>
-    //       <FormControl>
-    //         <Stack style={styles.formItems}>
-    //           <Input placeholder="Username" style={styles.Input} />
-    //         </Stack>
-    //         <Stack style={styles.formItems}>
-    //           <Input placeholder="Password" style={styles.Input} />
-    //         </Stack>
+  // Ensure user is authenticated before submitting the form
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+        const user = FIREBASE_AUTH.currentUser;
+        let location = await Location.getCurrentPositionAsync({});
+        setLocation(location);
 
-    //         <View style={styles.loginAs}>
-    //           <Text style={styles.loginText}>Login as</Text>
-    //           <Checkbox value={''} />
-    //           <View>
-    //             <Text style={styles.cboxText}>Admin</Text>
-    //           </View>
-    //           <Checkbox value={''} />
-    //           <View>
-    //             <Text style={styles.cboxText}>User</Text>
-    //           </View>
-    //         </View>
-    //         <View style={styles.Button}>
-    //           <Button style={styles.mainBtn}>
-    //             <Text style={styles.btnText}>Submit</Text>
-    //           </Button>
-    //         </View>
-    //       </FormControl>
-    //     </View>
-    //   </View>
-    //   <View style={styles.bottom}></View>
-    // </View>
+        // Firestore example
+        await addDoc(collection(FIRESTORE_DB, 'forms'), {
+            issue: issue,
+            location: location,
+            danger: danger,
+            dangerIndex: dangerIndex
+        });
 
-      <View>
-        {/* <Text>Hi</Text> */}
-      </View>
-  );
-}
+        setLoading(false);
+        alert('Form submitted successfully!');
+    } catch (error) {
+        setLoading(false);
+        console.error("Error adding document: ", error);
+        alert('Error submitting form');
+    }
+};
+
+return (
+    <View style={styles.container}>
+        <KeyboardAvoidingView behavior='padding'>
+            
+            {/* <TextInput
+                value={lon}
+                style={styles.input}
+                placeholder="Lon"
+                onChangeText={(text) => setLon(text)}
+            />
+            <TextInput
+                value={lat}
+                style={styles.input}
+                placeholder="Lat"
+                onChangeText={(text) => setLat(text)}
+            /> */}
+            <View>
+                <TextInput
+                  value={issue}
+                  style={styles.input}
+                  placeholder="What Issue"
+                  autoCapitalize="none"
+                  onChangeText={(text) => setIssue(text)}
+                />
+            </View>
+            <Divider style={{ backgroundColor: '#555555', marginVertical: 10 }} />
+            <TextInput
+                  value={danger}
+                  style={styles.input}
+                  placeholder="Describe Danger"
+                  onChangeText={(text) => setDanger(text)}
+              />
+            <Slider
+                style={{ width: 400, height: 40 }}
+                minimumValue={0}
+                maximumValue={10}
+                step={1}
+                minimumTrackTintColor="#FFFFFF"
+                onValueChange={(value) => setDangerIndex(value)}
+                thumbTintColor="blue"
+              />
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+              <Text style={{ fontSize: 24 }}>Priority: {dangerIndex}</Text>
+            </View>
+
+            {loading ? (
+                <ActivityIndicator size="large" color="#0000ff" />
+            ) : (
+                <>
+                    <Button title="Submit Form" onPress={handleSubmit} />
+                </>
+            )}
+        </KeyboardAvoidingView>
+    </View>
+);
+};
 
 export default FormScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    position: 'relative',
-  },
-  top: {
-    position: 'relative',
-    backgroundColor: '#5257F2',
-    paddingRight: 12.7,
-    paddingLeft: 12.7,
-    height: 250,
-  },
-  middle: {
-    width: '100%',
-    height: '100%',
-    flex: 1,
-    position: 'absolute',
-    zIndex: 2,
-    backgroundColor: 'transparent',
-    paddingLeft: 26.3,
-    paddingRight: 26.3,
-  },
-  bottom: {
-    position: 'relative',
-    height: '100%',
-    paddingRight: 12.7,
-    paddingLeft: 12.7,
-    backgroundColor: '#5257F2',
-  },
-  textContainer: {
-    color: '#FCFDFF',
-    fontFamily: 'GoogleSans-Bold',
-    fontSize: 24,
-    marginBottom: 30,
-    position: 'relative',
-    top: '20%',
-    alignSelf: 'center',
-  },
-  formArea: {
-    alignSelf: 'center',
-    width: '100%',
-    backgroundColor: '#ffffff',
-    borderRadius: 5,
-    top: '20%',
-    paddingBottom: 40,
-  },
-  signin: {
-    top: 0,
-    color: '#2D3057',
-    marginTop: 15,
-  },
-  formItems: {
-    marginTop: 15,
-    borderBottomColor: '#2D3057',
-  },
-  Input: {
-    fontFamily: 'Poppins-Bold',
-    fontSize: 12,
-  },
-  loginAs: {
-    paddingLeft: 46.6,
-    display: 'flex',
-    flexDirection: 'row',
-    marginTop: 15,
-    marginBottom: 20,
-    alignItems: 'center',
-  },
-  loginText: {
-    color: '#2D3057',
-    fontSize: 10,
-    fontFamily: 'GoogleSans-Bold',
-    fontWeight: 'bold',
-  },
-  cboxText: {
-    fontFamily: 'GoogleSans-Medium',
-    fontSize: 10,
-  },
-  Button: {
-    padding: 30.8,
-    borderRadius: 4,
-  },
-  mainBtn: {
-    backgroundColor: '#1DDCAF',
-  },
-  btnText: {
-    color: '#2D3057',
-    fontFamily: 'GoogleSans-Medium',
-    fontSize: 12,
-  },
+    container: {
+        marginHorizontal: 20,
+        flex: 1,
+        justifyContent: 'center'
+    },
+    input: {
+        marginVertical: 4,
+        height: 50,
+        borderWidth: 1,
+        borderRadius: 4,
+        padding: 10,
+        backgroundColor: '#fff'
+    },
+    largeText: {
+      fontSize: 24, // Increase this value to make the text larger
+    },
+  
 });

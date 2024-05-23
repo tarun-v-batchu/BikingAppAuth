@@ -10,9 +10,11 @@ import React, { useEffect, useState } from "react";
 import { FIREBASE_AUTH } from './FirebaseConfig'
 import { Text, Button, StyleSheet, View } from 'react-native'
 import MapView, { Callout, Marker } from 'react-native-maps';
+import Route from './app/screens/Route'
+import { AppRegistry, Platform } from 'react-native';
 
+AppRegistry.registerComponent('main', () => App);
 const Stack = createNativeStackNavigator();
-
 const InsideStack = createNativeStackNavigator();
 
 function InsideLayout() {
@@ -22,6 +24,7 @@ function InsideLayout() {
       <InsideStack.Screen name="details" component={FormScreen} />
       <InsideStack.Screen name="map" component={Map} />
       <InsideStack.Screen name="block" component={Block} />
+      <InsideStack.Screen name="route" component={Route} />
     </InsideStack.Navigator>
   )
 }
